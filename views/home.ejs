@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blogs Website</title>
+  <link rel="stylesheet" href="/style2.css">
+</head>
+
+<body>
+  <div>
+    <h1>Welcome to the Blogs Website</h1>
+    <div>
+      <h2>Create New Blog</h2>
+      <form action="/blogs" method="post">
+        <div>
+          <label for="title">Title:</label><br />
+          <input type="text" id="title" name="title" placeholder="Enter blog title" required />
+        </div>
+        <br />
+        <div>
+          <label for="content">Content:</label><br />
+          <textarea id="content" name="content" placeholder="Write your blog content here" required></textarea>
+        </div>
+        <br />
+        <button type="submit">Post Blog</button>
+      </form>
+    </div>
+
+    <hr />
+
+    <div>
+      <h2>All Blogs</h2>
+      <% if (typeof blogs !=='undefined' && blogs.length> 0) { %> <% blogs.forEach(blog=> { %>
+          <div>
+            <h3>
+              <%= blog.title %>
+            </h3>
+            <p>
+              <small>
+                By: <%= blog.author.fullName %> | <%= new Date(blog.createdAt).toLocaleString() %>
+              </small>
+            </p>
+            <p>
+              <%= blog.content %>
+            </p>
+            <% if (blog.author._id.toString()===userID.toString()) { %>
+
+              <button onclick="showEditForm('<%= blog._id %>')">Edit</button>
+
+              <form action="/blogs/<%= blog._id %>/delete" method="post" style="display: inline">
+                <button type="submit" onclick="return confirm('Are you sure?')">
+                  Delete
+                </button>
+              </form>
+
+              <!-- Hidden edit form that will be shown when Edit button is clicked -->
+              <div id="editForm-<%= blog._id %>" style="display: none; margin-top: 10px">
+                <form action="/blogs/<%= blog._id %>/edit" method="post">
+                  <input type="text" name="title" value="<%= blog.title %>" required /><br />
+                  <textarea name="content" rows="4" required>
+                <%= blog.content %></textarea>
+                  <br />
+                  <button type="submit">Save Changes</button>
+                  <button type="button" onclick="hideEditForm('<%= blog._id %>')">
+                    Cancel
+                  </button>
+                </form>
+              </div>
+              <% } %>
+                <hr />
+          </div>
+          <% }); %>
+            <% } else { %>
+              <p>No blogs found. Be the first to create a blog!</p>
+              <% } %>
+    </div>
+
+    <div>
+      <a href="/logout">Logout</a>
+    </div>
+  </div>
+</body>
+
+<script>
+  function showEditForm(blogId) {
+    document.getElementById("editForm-" + blogId).style.display = "block";
+  }
+
+  function hideEditForm(blogId) {
+    document.getElementById("editForm-" + blogId).style.display = "none";
+  }
+</script>
+
+</html>
